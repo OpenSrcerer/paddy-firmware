@@ -1,6 +1,5 @@
 #include "ConnectingDaemonState.hpp"
 #include "../../mqtt/MqttModule.hpp"
-#include "../../DaemonSecrets.hpp"
 
 
 namespace paddy

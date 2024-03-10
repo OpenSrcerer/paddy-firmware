@@ -19,6 +19,7 @@ public:
     static StorageModule &getInstance();
 
     // May be empty
+    bool hasJwt();
     const char* readJwt();
     void writeJwt(const char* jwt);
 

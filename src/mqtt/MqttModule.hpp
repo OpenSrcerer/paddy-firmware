@@ -10,16 +10,17 @@ namespace paddy
 class MqttModule
 {
 private:
+    WiFiSSLClient wifiClient;
     MqttClient mqttClient;
 
 public:
-    static MqttModule &getInstance(WiFiSSLClient& client);
+    static MqttModule &getInstance();
 
     void startMqtt();
     void onMqttMessage();
 
 private:
-    MqttModule(WiFiSSLClient &client) : mqttClient(client) {}
+    MqttModule() : mqttClient(wifiClient) {}
     MqttModule(MqttModule const&);
     MqttModule& operator=(MqttModule const&);
 };

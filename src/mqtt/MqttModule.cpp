@@ -1,44 +1,36 @@
 #include "MqttModule.hpp"
-#include "../DaemonSecrets.hpp"
-
-// ------ MQTT Configuration ------
-// Authorization
-char JWT[]           = SECRET_JWT;
-
-// Broker
-char BROKER_HOST[]   = SECRET_BROKER_HOST;
-int  BROKER_PORT     = SECRET_BROKER_PORT;
+#include "../storage/StorageModule.hpp"
+#include "../DaemonGlobals.hpp"
 
 // Topics
-char DEVICE_SERIAL[] = SECRET_DEVICE_SERIAL;
-char WRITE_TOPIC[]   = SECRET_WRITE_TOPIC;
-char READ_TOPIC[]    = SECRET_READ_TOPIC;
+String WRITE_TOPIC   = "daemon/v1/writes/" + String(DEVICE_SERIAL);
+String READ_TOPIC    = "daemon/v1/reads/" + String(DEVICE_SERIAL);
 
 namespace paddy
 {
 
 void MqttModule::startMqtt()
 {
-    // Serial.print("Attempting to connect to the MQTT broker: ");
-    // Serial.print(BROKER_HOST);
-    // Serial.print(":");
-    // Serial.println(BROKER_PORT);
+    Serial.print("[MqttModule] Connecting to broker: ");
+    Serial.print(BROKER_HOST);
+    Serial.print(":");
+    Serial.println(BROKER_PORT);
 
-    // mqttClient.setUsernamePassword(JWT, "");
+    mqttClient.setUsernamePassword("jwt-here", "");
 
-    // if (!mqttClient.connect(BROKER_HOST, BROKER_PORT)) {
-    //     Serial.print("MQTT connection failed! Error code = ");
-    //     Serial.println(mqttClient.connectError());
+    if (!mqttClient.connect(BROKER_HOST, BROKER_PORT)) {
+        Serial.print("[MqttModule] Connection failed! Error code: ");
+        Serial.println(mqttClient.connectError());
 
-    //     while (1);
-    // }
+        while (1);
+    }
 
-    // Serial.println("You're connected to the MQTT broker!");
-    // Serial.print("Subscribing to: ");
-    // Serial.println(READ_TOPIC);
+    Serial.println("[MqttModule] Connection successful!");
+    Serial.print("[MqttModule] Subscribing to: ");
+    Serial.println(READ_TOPIC);
 
     // mqttClient.onMessage(onMqttMessage);
-    // mqttClient.subscribe(READ_TOPIC);
+    int subStatus = mqttClient.subscribe(READ_TOPIC.c_str());
 }
 
 void MqttModule::onMqttMessage()
@@ -51,7 +43,7 @@ void MqttModule::onMqttMessage()
     // }
     // String receivedString = String(receivedMessage);
 
-    // Serial.print("Received MQTT Message: ");
+    // Serial.print("[MqttModule] Received MQTT Message: ");
     // Serial.println(receivedString);
 
     // if (strncmp(receivedMessage, "toggle", 6) == 0) {
@@ -65,9 +57,9 @@ void MqttModule::onMqttMessage()
 }
 
 
-MqttModule& MqttModule::getInstance(WiFiSSLClient& client)
+MqttModule& MqttModule::getInstance()
 {
-    static MqttModule singleton(client);
+    static MqttModule singleton;
     return singleton;
 }
 

@@ -6,6 +6,27 @@
 namespace paddy
 {
 
+// Checks if the first 4 chars saved in
+// Emulated EEPROM are digits. If not,
+// no JWT was saved
+bool StorageModule::hasJwt()
+{
+	// Read the stored length of the JWT.
+	String jwtLength;
+	read(jwtLength, 0, 4);
+
+	const char* length = jwtLength.c_str();
+	for (int i = 0; i < jwtLength.length(); ++i)
+	{
+		if(!isdigit(length[i]))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 const char* StorageModule::readJwt()
 {
 	// If in-memory JWT is already stored
