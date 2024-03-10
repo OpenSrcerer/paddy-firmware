@@ -25,6 +25,8 @@ private:
     Boot(Daemon* daemon) {
         this->daemon = daemon;
     }
+    Boot(Boot const&);
+    Boot& operator=(Boot const&);
 };
 
 }

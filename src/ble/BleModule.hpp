@@ -21,16 +21,7 @@ private:
     const char* ssidChar = "";
     const char* passChar = "";
 
-public:
-    BleModule(
-        const char* wifiUuid,
-        const char* ssidUuid,
-        const char* passUuid,
-        int passFlags
-    ) : bleWifiService(wifiUuid),
-        bleSsidChar(ssidUuid, passFlags, MAX_CHARACTERISTIC_BUFFER_SIZE),
-        blePassChar(passUuid, passFlags, MAX_CHARACTERISTIC_BUFFER_SIZE) {}
-        
+public:    
     static BleModule& getInstance();
 
     void startBle();
@@ -40,6 +31,18 @@ public:
 
     inline const char* getSsid() { return ssidChar; }
     inline const char* getPass() { return passChar; }
+
+private:
+    BleModule(
+        const char* wifiUuid,
+        const char* ssidUuid,
+        const char* passUuid,
+        int passFlags
+    ) : bleWifiService(wifiUuid),
+        bleSsidChar(ssidUuid, passFlags, MAX_CHARACTERISTIC_BUFFER_SIZE),
+        blePassChar(passUuid, passFlags, MAX_CHARACTERISTIC_BUFFER_SIZE) {}
+    BleModule(BleModule const&);
+    BleModule& operator=(BleModule const&);
 };
 
 }

@@ -15,7 +15,7 @@ public:
         return name;
     }
 
-    void enter(Daemon *daemon) {}
+    void enter(Daemon *daemon);
     void exit(Daemon *daemon) {}
     void toggle(Daemon *daemon) {}
 
@@ -23,6 +23,8 @@ public:
 
 private:
     Broken() {}
+    Broken(Broken const&);
+    Broken& operator=(Broken const&);
 };
 
 }

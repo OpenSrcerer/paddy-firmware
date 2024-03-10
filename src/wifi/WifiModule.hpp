@@ -13,7 +13,6 @@ private:
     WiFiSSLClient client;
 
 public:
-    WifiModule() {}
     static WifiModule& getInstance();
 
     inline WiFiSSLClient& getClient() { return client; }
@@ -21,6 +20,11 @@ public:
     bool startWifi(const char* ssid, const char* pass);
     void stopWifi();
     bool check();
+
+private:
+    WifiModule() {}
+    WifiModule(WifiModule const&);
+    WifiModule& operator=(WifiModule const&);
 };
 
 }

@@ -25,6 +25,8 @@ private:
     Init(Daemon* daemon) {
         this->daemon = daemon;
     }
+    Init(Init const&);
+    Init& operator=(Init const&);
 };
 
 }

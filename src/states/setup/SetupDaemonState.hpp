@@ -25,6 +25,8 @@ private:
     Setup(Daemon* daemon) {
         this->daemon = daemon;
     }
+    Setup(Setup const&);
+    Setup& operator=(Setup const&);
 };
 
 }

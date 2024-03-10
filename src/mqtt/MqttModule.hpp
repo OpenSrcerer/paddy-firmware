@@ -13,12 +13,15 @@ private:
     MqttClient mqttClient;
 
 public:
-    MqttModule(WiFiSSLClient &client) : mqttClient(client) {}
-
     static MqttModule &getInstance(WiFiSSLClient& client);
 
     void startMqtt();
     void onMqttMessage();
+
+private:
+    MqttModule(WiFiSSLClient &client) : mqttClient(client) {}
+    MqttModule(MqttModule const&);
+    MqttModule& operator=(MqttModule const&);
 };
 
 }

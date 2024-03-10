@@ -7,7 +7,10 @@
 paddy::Daemon daemon;
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(2, OUTPUT);
+
+
   Serial.begin(9600);
 
   while (!Serial) {

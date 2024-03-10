@@ -25,6 +25,8 @@ private:
 	Connecting(Daemon* daemon) {
 		this->daemon = daemon;
 	}
+	Connecting(Connecting const&);
+    Connecting& operator=(Connecting const&);
 };
 
 }
