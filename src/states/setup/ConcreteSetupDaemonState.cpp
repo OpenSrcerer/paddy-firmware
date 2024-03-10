@@ -12,6 +12,7 @@ void Setup::enter(Daemon *daemon)
     WifiModule* wifi = &WifiModule::getInstance();
 
     // ------ Bluetooth Phase ------
+    ble->setupBle();
     do {
         ble->startBle();
         ble->getCredentials(); // Blocks until credentials are retrieved

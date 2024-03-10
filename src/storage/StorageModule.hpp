@@ -1,8 +1,8 @@
 #ifndef STORAGE_MODULE_HPP
 #define STORAGE_MODULE_HPP
 
-// #define EEPROM_EMULATION_SIZE     (4 * 1024)
-#define FLASH_DEBUG 0 // 0-2
+#define EEPROM_EMULATION_SIZE (2 * 1024)
+#define FLASH_DEBUG            0 // 0-2
 
 #include <Arduino.h>
 
@@ -13,7 +13,7 @@ class StorageModule
 {
 
 private:
-    char* memoryJwt = "";
+    String memoryJwt;
 
 public:
     static StorageModule &getInstance();

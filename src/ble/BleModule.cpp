@@ -7,7 +7,8 @@
 namespace paddy
 {
 
-void BleModule::startBle()
+
+void BleModule::setupBle()
 {
     // Set up BLE service
     BLE.setLocalName(BLE_NAME);
@@ -26,6 +27,12 @@ void BleModule::startBle()
 
     // Add the service and advertise it
     BLE.addService(bleService);
+}
+
+void BleModule::startBle()
+{
+    Serial.println("[BleModule] BLE starting up...");
+
     BLE.advertise();
 
     Serial.println("[BleModule] BLE listening...");
@@ -33,14 +40,19 @@ void BleModule::startBle()
 
 void BleModule::stopBle()
 {
+    freeCredentials();
+
     central.disconnect();
     BLE.stopAdvertise();
     BLE.end();
+    
     Serial.println("[BleModule] BLE ended.");
 }
 
 void BleModule::getCredentials()
 {
+    String jwt;
+
     while (1)
     {
         central = BLE.central();
@@ -63,32 +75,45 @@ void BleModule::getCredentials()
 
             if (bleSsidChar.written())
             {
-                ssidChar = strdup(bleSsidChar.value().c_str());
+                ssidChar = strndup(bleSsidChar.value().c_str(), bleSsidChar.value().length());
             }
 
             if (blePassChar.written())
             {
-                passChar = strdup(blePassChar.value().c_str());
+                passChar = strndup(blePassChar.value().c_str(), blePassChar.value().length());
             }
 
             if (bleEUsernameChar.written())
             {
-                eUsernameChar = strdup(bleEUsernameChar.value().c_str());
+                eUsernameChar = strndup(bleEUsernameChar.value().c_str(), bleEUsernameChar.value().length());
             }
 
             if (bleEPasswordChar.written())
             {
-                ePasswordChar = strdup(bleEPasswordChar.value().c_str());
+                ePasswordChar = strndup(bleEPasswordChar.value().c_str(), bleEPasswordChar.value().length());
             }
 
             if (bleJwtChar.written())
             {
-                StorageModule::getInstance().writeJwt(strdup(bleJwtChar.value().c_str()));
+                // Need to buffer JWT because the max write for BLE is 512 bytes
+                String partialJwt = bleJwtChar.value();
+                Serial.println(
+                    String("[BleModule] Received partial JWT: (") + 
+                    String(partialJwt.length()) + 
+                    String(" chars): <") +
+                    String(partialJwt) +
+                    ">"
+                );
+
+                jwt = jwt + partialJwt;
+                bleJwtChar.setValue("");
             }
 
             // Proceeds when you setup the SSID
             if (strlen(ssidChar))
             {
+                // Flush JWT
+                StorageModule::getInstance().writeJwt(jwt.c_str());
                 return;
             }
         }

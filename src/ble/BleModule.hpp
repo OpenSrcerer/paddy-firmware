@@ -6,8 +6,8 @@
 namespace paddy
 {
 
-static const int MAX_JWT_CHARACTERISTIC_BUFFER_SIZE = 1000;
-static const int MAX_CHARACTERISTIC_BUFFER_SIZE = 32;
+static const int MAX_JWT_CHARACTERISTIC_BUFFER_SIZE = 512;
+static const int MAX_CHARACTERISTIC_BUFFER_SIZE = 64;
 
 class BleModule
 {
@@ -21,19 +21,19 @@ private:
 
     // ---- SSID ----
     BLEStringCharacteristic bleSsidChar;
-    const char* ssidChar = "";
+    char* ssidChar = "";
 
     // ---- Password ----
     BLEStringCharacteristic blePassChar;
-    const char* passChar = "";
+    char* passChar = "";
 
     // ---- Username (Enterprise) ----
     BLEStringCharacteristic bleEUsernameChar;
-    const char* eUsernameChar = "";
+    char* eUsernameChar = "";
 
     // ---- Password (Enterprise) ----
     BLEStringCharacteristic bleEPasswordChar;
-    const char* ePasswordChar = "";
+    char* ePasswordChar = "";
 
     // ---- MQTT JWT ----
     BLEStringCharacteristic bleJwtChar;
@@ -41,6 +41,7 @@ private:
 public:    
     static BleModule& getInstance();
 
+    void setupBle();
     void startBle();
     void getCredentials();
     void stopBle();
@@ -50,6 +51,13 @@ public:
     inline const char* getPass() { return passChar; }
     inline const char* getEUsername() { return eUsernameChar; }
     inline const char* getEPassword() { return ePasswordChar; }
+
+    inline void freeCredentials() {
+        if (strlen(ssidChar)) { free(ssidChar); }
+        if (strlen(passChar)) { free(passChar); }
+        if (strlen(eUsernameChar)) { free(eUsernameChar); }
+        if (strlen(ePasswordChar)) { free(ePasswordChar); }
+    }
 
 private:
     BleModule(

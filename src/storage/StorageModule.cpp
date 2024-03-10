@@ -30,8 +30,8 @@ bool StorageModule::hasJwt()
 const char* StorageModule::readJwt()
 {
 	// If in-memory JWT is already stored
-	if (strlen(memoryJwt) != 0) {
-		return memoryJwt;
+	if (memoryJwt.length() != 0) {
+		return memoryJwt.c_str();
 	}
 
 	// First read the length of the jwt (read the first 4 chars in EEPROM)
@@ -42,8 +42,8 @@ const char* StorageModule::readJwt()
 	String jwt;
 	read(jwt, 4, 4 + jwtLength.toInt());
 
-	strcpy(memoryJwt, jwt.c_str());
-	return memoryJwt;
+	memoryJwt = String(jwt);
+	return memoryJwt.c_str();
 }
 
 void StorageModule::writeJwt(const char *jwt)
@@ -55,6 +55,10 @@ void StorageModule::writeJwt(const char *jwt)
 
 	// Then write the actual JWT
 	write(jwt, strlen(jwt), 4);
+
+	memoryJwt = String(jwt);
+
+	Serial.println("[StorageModule] Done writing JWT.");
 }
 
 void StorageModule::padUntilLength(String &string, int length)
