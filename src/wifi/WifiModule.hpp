@@ -3,6 +3,7 @@
 
 #include <WiFiNINA.h>
 #include <WiFiSSLClient.h>
+#include "../ble/BleModule.hpp"
 
 namespace paddy
 {
@@ -17,7 +18,7 @@ public:
 
     inline WiFiSSLClient& getClient() { return client; }
 
-    bool startWifi(const char* ssid, const char* pass);
+    bool startWifi(BleModule* ble);
     void stopWifi();
     bool check();
 

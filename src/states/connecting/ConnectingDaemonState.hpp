@@ -19,12 +19,10 @@ public:
 	void exit(Daemon *daemon);
 	void toggle(Daemon *daemon);
 
-	static DaemonState &getInstance(Daemon* daemon);
+	static DaemonState &getInstance();
 
 private:
-	Connecting(Daemon* daemon) {
-		this->daemon = daemon;
-	}
+	Connecting() {}
 	Connecting(Connecting const&);
     Connecting& operator=(Connecting const&);
 };

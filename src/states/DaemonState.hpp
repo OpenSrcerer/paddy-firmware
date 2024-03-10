@@ -19,8 +19,6 @@ public:
 
     virtual ~DaemonState() {}
 
-protected:
-    Daemon* daemon;
 };
 
 }

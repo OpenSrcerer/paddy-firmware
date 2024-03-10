@@ -1,28 +1,44 @@
 #include "BleModule.hpp"
 #include "../DaemonSecrets.hpp"
+#include "../storage/StorageModule.hpp"
 
 // ------ Bluetooth Configuration ------
-char BLE_NAME[] = SECRET_BLE_NAME;
-char WIFI_UUID[] = SECRET_WIFI_UUID;
-char SSID_UUID[] = SECRET_SSID_UUID;
-char PASS_UUID[] = SECRET_PASS_UUID;
+char DEVICE_SERIAL[]    = SECRET_DEVICE_SERIAL;
+char BLE_NAME[]         = SECRET_BLE_NAME;
+
+char SERVICE_UUID[]     = SECRET_SERVICE_UUID;
+char SERIAL_UUID[]      = SECRET_SERIAL_UUID;
+char SSID_UUID[]        = SECRET_SSID_UUID;
+char PASS_UUID[]        = SECRET_PASS_UUID;
+char E_USERNAME_UUID[]  = SECRET_E_USERNAME_UUID;
+char E_PASSWORD_UUID[]  = SECRET_E_PASSWORD_UUID;
+char JWT_UUID[]         = SECRET_JWT_UUID;
 
 namespace paddy
 {
 
 void BleModule::startBle()
 {
-    // Set up BLE service and characteristics
+    // Set up BLE service
     BLE.setLocalName(BLE_NAME);
-    BLE.setAdvertisedService(bleWifiService);
-    bleWifiService.addCharacteristic(bleSsidChar);
-    bleWifiService.addCharacteristic(blePassChar);
+    BLE.setAdvertisedService(bleService);
+
+    // Add characteristics
+    bleService.addCharacteristic(bleSerialChar);
+    bleService.addCharacteristic(bleSsidChar);
+    bleService.addCharacteristic(blePassChar);
+    bleService.addCharacteristic(bleEUsernameChar);
+    bleService.addCharacteristic(bleEPasswordChar);
+    bleService.addCharacteristic(bleJwtChar);
+
+    // Write the serial to the characteristic to be readable
+    bleSerialChar.writeValue(String(DEVICE_SERIAL));
 
     // Add the service and advertise it
-    BLE.addService(bleWifiService);
+    BLE.addService(bleService);
     BLE.advertise();
 
-    Serial.println("BLE listening...");
+    Serial.println("[BleModule] BLE listening...");
 }
 
 void BleModule::stopBle()
@@ -30,10 +46,10 @@ void BleModule::stopBle()
     central.disconnect();
     BLE.stopAdvertise();
     BLE.end();
-    Serial.println("BLE ended.");
+    Serial.println("[BleModule] BLE ended.");
 }
 
-void BleModule::getWifiCredentials()
+void BleModule::getCredentials()
 {
     while (1)
     {
@@ -44,14 +60,14 @@ void BleModule::getWifiCredentials()
             continue;
         }
 
-        Serial.print("Connected to BLE Central: ");
+        Serial.print("[BleModule] Connected to BLE Central: ");
         Serial.println(central.address());
 
         while (central.connected())
         {
             if (!central.connected())
             {
-                Serial.println("BLE Central disconnected!");
+                Serial.println("[BleModule] Central disconnected!");
                 BLE.advertise(); // Re-advertise after disconnection
             }
 
@@ -65,16 +81,24 @@ void BleModule::getWifiCredentials()
                 passChar = strdup(blePassChar.value().c_str());
             }
 
-            if (strlen(ssidChar) != 0 && strlen(passChar) != 0)
+            if (bleEUsernameChar.written())
             {
-                stopBle();
+                eUsernameChar = strdup(bleEUsernameChar.value().c_str());
+            }
 
-                Serial.print("SSID Retrieved: ");
-                Serial.println(ssidChar);
+            if (bleEPasswordChar.written())
+            {
+                ePasswordChar = strdup(bleEPasswordChar.value().c_str());
+            }
 
-                Serial.print("Pass Retrieved: ");
-                Serial.println(passChar);
+            if (bleJwtChar.written())
+            {
+                StorageModule::getInstance().writeJwt(strdup(bleJwtChar.value().c_str()));
+            }
 
+            // Proceeds when you setup the SSID
+            if (strlen(ssidChar))
+            {
                 return;
             }
         }
@@ -85,7 +109,7 @@ bool BleModule::check()
 {
     if (!BLE.begin())
     {
-        Serial.println("Starting BLE failed!");
+        Serial.println("[BleModule] Starting BLE failed!");
         return false;
     }
     return true;
@@ -93,7 +117,16 @@ bool BleModule::check()
 
 BleModule& BleModule::getInstance()
 {
-    static BleModule singleton(WIFI_UUID, SSID_UUID, PASS_UUID, BLEWrite);
+    static BleModule singleton(
+        DEVICE_SERIAL,
+        SERVICE_UUID,
+        SERIAL_UUID,
+        SSID_UUID,
+        PASS_UUID,
+        E_USERNAME_UUID,
+        E_PASSWORD_UUID,
+        JWT_UUID
+    );
     return singleton;
 }
 

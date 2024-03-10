@@ -9,7 +9,7 @@ namespace paddy
 
 void Boot::enter(Daemon *daemon)
 {
-    this->daemon->toggle();
+    daemon->toggle();
 }
 
 void Boot::toggle(Daemon *daemon)
@@ -23,12 +23,12 @@ void Boot::toggle(Daemon *daemon)
         return;
     }
 
-    daemon->setState(Init::getInstance(daemon));
+    daemon->setState(Init::getInstance());
 }
 
-DaemonState &Boot::getInstance(Daemon* daemon)
+DaemonState &Boot::getInstance()
 {
-    static Boot singleton(daemon);
+    static Boot singleton;
     return singleton;
 }
 

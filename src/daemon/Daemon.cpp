@@ -6,7 +6,7 @@ namespace paddy
 
 Daemon::Daemon()
 {
-    currentState = &Boot::getInstance(this);
+    currentState = &Boot::getInstance();
 }
 
 void Daemon::setState(DaemonState &newState)
