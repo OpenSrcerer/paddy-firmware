@@ -1,5 +1,7 @@
 #include "Daemon.hpp"
 #include "../states/boot/BootDaemonState.hpp"
+#include "../DaemonGlobals.hpp"
+
 
 namespace paddy
 {
@@ -11,11 +13,11 @@ Daemon::Daemon()
 
 void Daemon::setState(DaemonState &newState)
 {
-    Serial.print("[STATE] <");
+    Serial.print(String("\n[Daemon-") + String(DEVICE_SERIAL) + "] ------ <");
     Serial.print(currentState->name());
     Serial.print(" --> ");
     Serial.print(newState.name());
-    Serial.println(">");
+    Serial.println("> ------\n");
 
     currentState->exit(this);
     currentState = &newState;

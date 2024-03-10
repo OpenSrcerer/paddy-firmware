@@ -19,10 +19,12 @@ void Boot::toggle(Daemon *daemon)
 
     if (!wifiStatus || !bleStatus) 
     {
+        Serial.println(String("[State: BOOT] Hardware failure."));
         daemon->setState(Broken::getInstance());
         return;
     }
 
+    Serial.println(String("[State: BOOT] Hardware OK."));
     daemon->setState(Init::getInstance());
 }
 

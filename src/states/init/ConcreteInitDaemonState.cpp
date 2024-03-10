@@ -17,12 +17,12 @@ void Init::toggle(Daemon *daemon)
 
     if (storageModule->hasJwt())
     { // Immediately connect to broker
-        Serial.println("[INIT] JWT found, directly connecting to broker.");
+        Serial.println("[State: INIT] JWT found, directly connecting to broker.");
         daemon->setState(Connecting::getInstance());
     }
     else
     { // Daemon isn't configured, take user through setup flow
-        Serial.println("[INIT] JWT not found, initializing setup flow.");
+        Serial.println("[State: INIT] JWT not found, initializing setup flow.");
         daemon->setState(Setup::getInstance());
     }
 }
