@@ -32,7 +32,7 @@ void MqttModule::startMqtt()
         Serial.print(mqttClient.connectError());
         Serial.println(".");
 
-        delay(500)
+        delay(500);
     }
 
     Serial.println("[MqttModule] Connection successful!");
