@@ -17,7 +17,8 @@ public:
     static MqttModule &getInstance();
 
     void startMqtt();
-    void onMqttMessage();
+    void onMqttMessage(int messageSize);
+    inline void poll() { mqttClient.poll(); }
 
 private:
     MqttModule() : mqttClient(wifiClient) {}

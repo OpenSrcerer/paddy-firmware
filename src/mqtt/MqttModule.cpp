@@ -1,22 +1,29 @@
 #include "MqttModule.hpp"
+#include "../control/ControlModule.hpp"
 #include "../storage/StorageModule.hpp"
 #include "../DaemonGlobals.hpp"
 
 // Topics
-String WRITE_TOPIC   = "daemon/v1/writes/" + String(DEVICE_SERIAL);
-String READ_TOPIC    = "daemon/v1/reads/" + String(DEVICE_SERIAL);
+String WRITES   = WRITE_TOPIC + String(DEVICE_SERIAL);
+String READS    = READ_TOPIC + String(DEVICE_SERIAL);
 
 namespace paddy
 {
 
 void MqttModule::startMqtt()
 {
-    Serial.print("[MqttModule] Connecting to broker: ");
+    StorageModule* storageModule = &StorageModule::getInstance();
+
+    Serial.print("[MqttModule] Connecting to broker ");
     Serial.print(BROKER_HOST);
     Serial.print(":");
-    Serial.println(BROKER_PORT);
+    Serial.print(BROKER_PORT);
+    Serial.println("...");
+    Serial.print("[MqttModule] JWT Credentials: <");
+    Serial.print(storageModule->readJwt());
+    Serial.println(">");
 
-    mqttClient.setUsernamePassword("jwt-here", "");
+    mqttClient.setUsernamePassword(storageModule->readJwt(), "");
 
     if (!mqttClient.connect(BROKER_HOST, BROKER_PORT)) {
         Serial.print("[MqttModule] Connection failed! Error code: ");
@@ -27,33 +34,39 @@ void MqttModule::startMqtt()
 
     Serial.println("[MqttModule] Connection successful!");
     Serial.print("[MqttModule] Subscribing to: ");
-    Serial.println(READ_TOPIC);
+    Serial.println(READS);
 
-    // mqttClient.onMessage(onMqttMessage);
-    int subStatus = mqttClient.subscribe(READ_TOPIC.c_str());
+    mqttClient.onMessage([](int messageSize) {
+        MqttModule* mqttModule = &MqttModule::getInstance();
+        mqttModule->onMqttMessage(messageSize);
+    });
+
+    int subStatus = mqttClient.subscribe(READS.c_str());
 }
 
-void MqttModule::onMqttMessage()
+void MqttModule::onMqttMessage(int messageSize)
 {
-    // char receivedMessage[messageSize];
-    // int i = 0;
-    // while (mqttClient.available()) {
-    //     receivedMessage[i] = (char) mqttClient.read();
-    //     ++i;
-    // }
-    // String receivedString = String(receivedMessage);
+    ControlModule* controlModule = &ControlModule::getInstance();
 
-    // Serial.print("[MqttModule] Received MQTT Message: ");
-    // Serial.println(receivedString);
+    char receivedMessage[messageSize];
+    int i = 0;
+    while (mqttClient.available()) {
+        receivedMessage[i] = (char) mqttClient.read();
+        ++i;
+    }
+    String receivedString = String(receivedMessage);
 
-    // if (strncmp(receivedMessage, "toggle", 6) == 0) {
-    //     lightStatus = !lightStatus;
-    //     String response = String("{\"message\":\"toggled\"}");
+    Serial.print("[MqttModule] Received MQTT Message: ");
+    Serial.println(receivedString);
 
-    //     mqttClient.beginMessage(WRITE_TOPIC);
-    //     mqttClient.print(response);
-    //     mqttClient.endMessage();
-    // }
+    if (strncmp(receivedMessage, "toggle", 6) == 0) {
+        controlModule->toggle();
+        String response = String("{\"message\":\"toggled\"}");
+
+        mqttClient.beginMessage(WRITES);
+        mqttClient.print(response);
+        mqttClient.endMessage();
+    }
 }
 
 

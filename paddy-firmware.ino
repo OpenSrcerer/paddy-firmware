@@ -10,9 +10,9 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(2, OUTPUT);
 
-
   Serial.begin(9600);
 
+  // Remove in production
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB
   }
