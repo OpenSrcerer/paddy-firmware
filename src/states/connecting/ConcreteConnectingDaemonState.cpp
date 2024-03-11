@@ -1,24 +1,34 @@
 #include "ConnectingDaemonState.hpp"
 #include "../../mqtt/MqttModule.hpp"
+#include "../../wifi/WifiModule.hpp"
 #include "../online/OnlineDaemonState.hpp"
+#include "../backoff/BackoffDaemonState.hpp"
 
 namespace paddy
 {
 
 void Connecting::enter(Daemon *daemon)
 {
-    MqttModule* mqttModule = &MqttModule::getInstance();
-    mqttModule->startMqtt();
-    daemon->toggle();
-}
+    MqttModule* mqtt = &MqttModule::getInstance();
+    WifiModule* wifi = &WifiModule::getInstance();
 
-void Connecting::exit(Daemon *daemon)
-{
+    wifi->startWifi();
+    if (wifi->isSucceeded()) {
+        mqtt->startMqtt();
+    }
+
+    daemon->toggle();
 }
 
 void Connecting::toggle(Daemon *daemon)
 {
-    daemon->setState(Online::getInstance());
+    if (WifiModule::getInstance().isSucceeded()) {
+        daemon->setState(Online::getInstance());
+    } else {
+        // Go to backoff if cannot connect to Wifi
+        // or broker for a grace period
+        daemon->setState(Backoff::getInstance());
+    }
 }
 
 DaemonState &Connecting::getInstance()

@@ -16,7 +16,7 @@ public:
     }
 	
 	void enter(Daemon *daemon);
-	void exit(Daemon *daemon);
+	void exit(Daemon *daemon) {}
 	void toggle(Daemon *daemon);
 
 	static DaemonState &getInstance();
