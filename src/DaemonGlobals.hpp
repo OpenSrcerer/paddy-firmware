@@ -19,6 +19,7 @@ extern char PASS_UUID[];
 extern char E_USERNAME_UUID[];
 extern char E_PASSWORD_UUID[];
 extern char JWT_UUID[];
+extern char RESET_UUID[];
 
 // ------ Hardware Configuration ------
 extern int  CONTROL_PIN;

@@ -19,6 +19,7 @@ char PASS_UUID[]        = SECRET_PASS_UUID;
 char E_USERNAME_UUID[]  = SECRET_E_USERNAME_UUID;
 char E_PASSWORD_UUID[]  = SECRET_E_PASSWORD_UUID;
 char JWT_UUID[]         = SECRET_JWT_UUID;
+char RESET_UUID[]       = SECRET_RESET_UUID;
 
 // ------ Hardware Configuration ------
 int  CONTROL_PIN        = 2;
