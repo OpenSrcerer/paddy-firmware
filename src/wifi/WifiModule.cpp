@@ -37,8 +37,9 @@ void WifiModule::startWifi()
         Serial.print(connectTries);
         Serial.println("/3:");
 
-        // Assumes there is some form of storage.
-        // The job of declining the storage is to the INIT state.
+        // Assumes there is credentials stored.
+        // The job of rejecting getting to this
+        // point if there are no credentials is done on INIT state
         if (storage->hasEnterprise())
         {
             Serial.println("[WifiModule] Starting Enterprise Wifi...");
