@@ -7,96 +7,99 @@
 namespace paddy
 {
 
-
-void BleModule::setupBle()
-{
-    // Set up BLE service
-    BLE.setLocalName(BLE_NAME);
-    BLE.setAdvertisedService(bleService);
-
-    // Add characteristics
-    bleService.addCharacteristic(bleSerialChar);
-    bleService.addCharacteristic(bleSsidChar);
-    bleService.addCharacteristic(blePassChar);
-    bleService.addCharacteristic(bleEUsernameChar);
-    bleService.addCharacteristic(bleEPasswordChar);
-    bleService.addCharacteristic(bleJwtChar);
-
-    // Write the serial to the characteristic to be readable
-    bleSerialChar.writeValue(String(DEVICE_SERIAL));
-
-    // Add the service and advertise it
-    BLE.addService(bleService);
-}
-
 void BleModule::startBle()
 {
-    Serial.println("[BleModule] BLE starting up...");
+    Serial.println("[BleModule] Setting up...");
+
+    newCharacteristics(); // Load memory
+
+    BLE.begin();
+
+    // Set up BLE service
+    BLE.setLocalName(BLE_NAME);
+    BLE.setAdvertisedService(*bleService);
+
+    // Add characteristics
+    bleService->addCharacteristic(*bleSerialChar);
+    bleService->addCharacteristic(*bleSsidChar);
+    bleService->addCharacteristic(*blePassChar);
+    bleService->addCharacteristic(*bleEUsernameChar);
+    bleService->addCharacteristic(*bleEPasswordChar);
+    bleService->addCharacteristic(*bleJwtChar);
+    bleService->addCharacteristic(*bleResetChar);
+
+    // Write the serial to the characteristic to be readable
+    bleSerialChar->writeValue(String(DEVICE_SERIAL));
+
+    // Add the service
+    BLE.addService(*bleService);
+
+    Serial.println("[BleModule] Starting up...");
 
     BLE.advertise();
 
-    Serial.println("[BleModule] BLE listening...");
+    Serial.println("[BleModule] Listening...");
 }
 
 void BleModule::stopBle()
 {
-    freeCredentials();
-
     central.disconnect();
     BLE.stopAdvertise();
+
+    // Clear characteristics
+    bleService->clear();
+
     BLE.end();
+
+    freeCharacteristics(); // Free memory
     
     Serial.println("[BleModule] BLE ended.");
 }
 
 void BleModule::getCredentials()
 {
-    String jwt;
+    StorageModule* storage = &StorageModule::getInstance();
 
-    while (1)
+    String jwt;
+    String ssid;
+    String pass;
+    String eUsername;
+    String ePassword;
+
+    while (true)
     {
         central = BLE.central();
-
-        if (!central)
-        {
-            continue;
-        }
+        if (!central) { continue; }
 
         Serial.print("[BleModule] Connected to BLE Central: ");
         Serial.println(central.address());
 
         while (central.connected())
         {
-            if (!central.connected())
+            if (bleSsidChar->written())
             {
-                Serial.println("[BleModule] Central disconnected!");
-                BLE.advertise(); // Re-advertise after disconnection
+                ssid = String(bleSsidChar->value());
             }
 
-            if (bleSsidChar.written())
+            if (blePassChar->written())
             {
-                ssidChar = strndup(bleSsidChar.value().c_str(), bleSsidChar.value().length());
+                pass = String(blePassChar->value());
             }
 
-            if (blePassChar.written())
+            if (bleEUsernameChar->written())
             {
-                passChar = strndup(blePassChar.value().c_str(), blePassChar.value().length());
+                eUsername = String(bleEUsernameChar->value());
             }
 
-            if (bleEUsernameChar.written())
+            if (bleEPasswordChar->written())
             {
-                eUsernameChar = strndup(bleEUsernameChar.value().c_str(), bleEUsernameChar.value().length());
+                ePassword = String(bleEPasswordChar->value());
             }
 
-            if (bleEPasswordChar.written())
-            {
-                ePasswordChar = strndup(bleEPasswordChar.value().c_str(), bleEPasswordChar.value().length());
-            }
-
-            if (bleJwtChar.written())
+            if (bleJwtChar->written())
             {
                 // Need to buffer JWT because the max write for BLE is 512 bytes
-                String partialJwt = bleJwtChar.value();
+                String partialJwt = bleJwtChar->value();
                 Serial.println(
                     String("[BleModule] Received partial JWT: (") + 
                     String(partialJwt.length()) + 
@@ -106,42 +109,64 @@ void BleModule::getCredentials()
                 );
 
                 jwt = jwt + partialJwt;
-                bleJwtChar.setValue("");
+                bleJwtChar->setValue("");
             }
 
             // Proceeds when you setup the SSID
-            if (strlen(ssidChar))
+            if (ssid.length())
             {
-                // Flush JWT
-                StorageModule::getInstance().writeJwt(jwt.c_str());
+                // Write credentials to storage
+                storage->writeAt(jwt.c_str(), JWT_ADDRESS);
+                storage->writeAt(ssid.c_str(), SSID_ADDRESS);
+                storage->writeAt(pass.c_str(), PASS_ADDRESS);
+                storage->writeAt(eUsername.c_str(), E_USERNAME_ADDRESS);
+                storage->writeAt(ePassword.c_str(), E_PASSWORD_ADDRESS);
+
                 return;
             }
         }
     }
 }
 
-bool BleModule::check() 
+bool BleModule::awaitReset()
 {
-    if (!BLE.begin())
+    StorageModule* storage = &StorageModule::getInstance();
+    long startClock = millis(); // Sample time
+
+    // Spin for 60 seconds
+    while (millis() - startClock < 60000)
     {
-        Serial.println("[BleModule] Starting BLE failed!");
-        return false;
+        central = BLE.central();
+        if (!central) { continue; }
+
+        Serial.print("[BleModule] Connected to BLE Central for RESET: ");
+        Serial.println(central.address());
+
+        // If someone is connected, await them...
+        while (central.connected())
+        {
+            startClock = millis(); // Reset timer if they disconnect
+
+            if (bleResetChar->written())
+            {
+                StorageModule::getInstance().clearAll();
+                return true;
+            }
+        }
     }
-    return true;
+    return false;
+}
+
+bool BleModule::checkHardware() 
+{
+    int isAvailable = BLE.begin();
+    BLE.end();
+    return isAvailable;
 }
 
 BleModule& BleModule::getInstance()
 {
-    static BleModule singleton(
-        DEVICE_SERIAL,
-        SERVICE_UUID,
-        SERIAL_UUID,
-        SSID_UUID,
-        PASS_UUID,
-        E_USERNAME_UUID,
-        E_PASSWORD_UUID,
-        JWT_UUID
-    );
+    static BleModule singleton;
     return singleton;
 }
 
