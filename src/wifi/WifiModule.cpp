@@ -1,21 +1,32 @@
 #include "WifiModule.hpp"
+#include "../storage/StorageModule.hpp"
 
 namespace paddy
 {
 
-bool WifiModule::startWifi(BleModule* ble)
+void WifiModule::startWifi()
 {
-    Serial.print("[WifiModule] Attempting to connect with credentials:\n[WifiModule] SSID <");
-    Serial.print(ble->getSsid());
+    StorageModule* storage = &StorageModule::getInstance();
+
+    const char* ssid = storage->readAt(SSID_ADDRESS);
+    const char* pass = storage->readAt(PASS_ADDRESS);
+    const char* eUsername = storage->readAt(E_USERNAME_ADDRESS);
+    const char* ePassword = storage->readAt(E_PASSWORD_ADDRESS);
+
+    Serial.print("[WifiModule] Connection attempt:\n[WifiModule] SSID <");
+    Serial.print(ssid);
+
     Serial.print(">\n[WifiModule] ");
     Serial.print("Password: <");
-    Serial.print(ble->getPass());
+    Serial.print(pass);
+
     Serial.print(">\n[WifiModule] ");
     Serial.print("Enterprise Username: <");
-    Serial.print(ble->getEUsername());
+    Serial.print(eUsername);
+
     Serial.print(">\n[WifiModule] ");
     Serial.print("Enterprise Password: <");
-    Serial.print(ble->getEPassword());
+    Serial.print(ePassword);
     Serial.println(">");
 
     int connectTries = 1;
@@ -26,20 +37,28 @@ bool WifiModule::startWifi(BleModule* ble)
         Serial.print(connectTries);
         Serial.println("/3:");
 
-        if (strlen(ble->getEUsername()) == 0)
+        // Assumes there is some form of storage.
+        // The job of declining the storage is to the INIT state.
+        if (storage->hasEnterprise())
+        {
+            Serial.println("[WifiModule] Starting Enterprise Wifi...");
+            connectStatus = WiFi.beginEnterprise(ssid, eUsername, ePassword);
+        }
+        else if (storage->hasPersonal())
         {
             Serial.println("[WifiModule] Starting Personal Wifi...");
-            connectStatus = WiFi.begin(ble->getSsid(), ble->getPass());
+            connectStatus = WiFi.begin(ssid, pass);
         }
         else
         {
-            Serial.println("[WifiModule] Starting Enterprise Wifi...");
-            connectStatus = WiFi.beginEnterprise(ble->getSsid(), ble->getEUsername(), ble->getEPassword());
+            Serial.println("[WifiModule] Starting Insecure Wifi...");
+            connectStatus = WiFi.begin(ssid);
         }
 
         if (connectStatus == WL_CONNECTED) {
             Serial.println("[WifiModule] Connected to wireless network!");
-            return true;
+            connectionSucceeded = true;
+            return;
         }
 
         ++connectTries;
@@ -47,7 +66,8 @@ bool WifiModule::startWifi(BleModule* ble)
 
     Serial.println("[WifiModule] Connection failed, probably bad credentials.");
     stopWifi();
-    return false;
+    connectionSucceeded = false;
+    return;
 }
 
 void WifiModule::stopWifi()
@@ -57,7 +77,7 @@ void WifiModule::stopWifi()
     Serial.println("[WifiModule] Connection ended.");
 }
 
-bool WifiModule::check() {
+bool WifiModule::checkHardware() {
     // Only used because there's a bug
     // If WiFi.status() is called without this,
     // the subsequent call will block forever.

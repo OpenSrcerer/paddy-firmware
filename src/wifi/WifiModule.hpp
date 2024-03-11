@@ -3,7 +3,6 @@
 
 #include <WiFiNINA.h>
 #include <WiFiSSLClient.h>
-#include "../ble/BleModule.hpp"
 
 namespace paddy
 {
@@ -11,16 +10,19 @@ namespace paddy
 class WifiModule
 {
 private:
+    bool connectionSucceeded; // Only updated after startWifi()
     WiFiSSLClient client;
 
 public:
     static WifiModule& getInstance();
 
     inline WiFiSSLClient& getClient() { return client; }
+    inline bool isSucceeded() { return connectionSucceeded; }
 
-    bool startWifi(BleModule* ble);
+    void startWifi();
     void stopWifi();
-    bool check();
+
+    bool checkHardware();
 
 private:
     WifiModule() {}
