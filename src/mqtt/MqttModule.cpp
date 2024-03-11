@@ -13,7 +13,7 @@ namespace paddy
 void MqttModule::startMqtt()
 {
     StorageModule* storageModule = &StorageModule::getInstance();
-    const char* jwt = storageModule->readJwt();
+    const char* jwt = storageModule->readAt(JWT_ADDRESS);
 
     Serial.print("[MqttModule] Connecting to broker ");
     Serial.print(BROKER_HOST);
@@ -25,14 +25,21 @@ void MqttModule::startMqtt()
     Serial.print(jwt);
     Serial.println(">");
 
-    mqttClient.setUsernamePassword(storageModule->readJwt(), "");
+    mqttClient.setUsernamePassword(jwt, "");
+    for (size_t i = 1; i <= 3; ++i) 
+    {
+        Serial.print("[MqttModule] Trying connection (");
+        Serial.print(i);
+        Serial.println("/3).");
+        
+        if (mqttClient.connect(BROKER_HOST, BROKER_PORT))
+        {
+            break;
+        }
 
-    while (!mqttClient.connect(BROKER_HOST, BROKER_PORT)) {
         Serial.print("[MqttModule] Connection failed! Error code: ");
         Serial.print(mqttClient.connectError());
         Serial.println(".");
-
-        delay(500);
     }
 
     Serial.println("[MqttModule] Connection successful!");
