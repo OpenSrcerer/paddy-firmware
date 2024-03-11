@@ -1,31 +1,19 @@
 #include "src/daemon/Daemon.hpp"
-
-// ------ Other ------
-// long millisLastMeasurement = 0;
-// bool lightStatus        = false;
+#include "src/DaemonGlobals.hpp"
 
 paddy::Daemon daemon;
 
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(2, OUTPUT);
+void setup()
+{
+	pinMode(LED_BUILTIN, OUTPUT);
+	pinMode(CONTROL_PIN, OUTPUT);
 
-  Serial.begin(9600);
+	Serial.begin(9600);
 
-  // Remove in production
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB
-  }
-
-  daemon.toggle(); // Move to the next state
+	daemon.toggle(); // Move to the first state
 }
 
-void loop() {
-  // if (millis() - millisLastMeasurement > 100) {
-  //   millisLastMeasurement = millis();
-
-  //   digitalWrite(2, lightStatus);
-  // }
-
-  // mqttClient.poll();
+void loop()
+{
+	// Nothing to see here :)
 }
