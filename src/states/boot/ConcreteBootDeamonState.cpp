@@ -14,8 +14,8 @@ void Boot::enter(Daemon *daemon)
 
 void Boot::toggle(Daemon *daemon)
 {
-    bool wifiStatus = WifiModule::getInstance().check();
-    bool bleStatus = BleModule::getInstance().check();
+    bool wifiStatus = WifiModule::getInstance().checkHardware();
+    bool bleStatus = BleModule::getInstance().checkHardware();
 
     if (!wifiStatus || !bleStatus) 
     {
