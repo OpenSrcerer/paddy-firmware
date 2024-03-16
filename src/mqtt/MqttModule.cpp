@@ -34,12 +34,17 @@ void MqttModule::startMqtt()
         
         if (mqttClient.connect(BROKER_HOST, BROKER_PORT))
         {
+            connectionSucceeded = true;
             break;
         }
 
-        Serial.print("[MqttModule] Connection failed! Error code: ");
-        Serial.print(mqttClient.connectError());
-        Serial.println(".");
+        if (i == 2) {
+            Serial.print("[MqttModule] Connection failed! Error code: ");
+            Serial.print(mqttClient.connectError());
+            Serial.println(".");
+
+            return;
+        }
     }
 
     Serial.println("[MqttModule] Connection successful!");

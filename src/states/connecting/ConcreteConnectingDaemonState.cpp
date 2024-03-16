@@ -22,7 +22,7 @@ void Connecting::enter(Daemon *daemon)
 
 void Connecting::toggle(Daemon *daemon)
 {
-    if (WifiModule::getInstance().isSucceeded()) {
+    if (WifiModule::getInstance().isSucceeded() && MqttModule::getInstance().isSucceeded()) {
         daemon->setState(Online::getInstance());
     } else {
         // Go to backoff if cannot connect to Wifi

@@ -10,6 +10,7 @@ namespace paddy
 class MqttModule
 {
 private:
+    bool connectionSucceeded; // Only updated after startWifi()
     WiFiSSLClient wifiClient;
     MqttClient mqttClient;
 
@@ -19,6 +20,7 @@ public:
     void startMqtt();
     void onMqttMessage(int messageSize);
     inline void poll() { mqttClient.poll(); }
+    inline bool isSucceeded() { return connectionSucceeded; }
 
 private:
     MqttModule() : mqttClient(wifiClient) {}
