@@ -6,8 +6,6 @@ extern char BROKER_HOST[];
 extern int  BROKER_PORT;
 
 extern char DEVICE_SERIAL[];
-extern char WRITE_TOPIC[];
-extern char READ_TOPIC[];
 
 // ------ Bluetooth Configuration ------
 extern char BLE_NAME[];

@@ -4,8 +4,8 @@
 #include "../DaemonGlobals.hpp"
 
 // Topics
-String WRITES   = WRITE_TOPIC + String(DEVICE_SERIAL);
-String READS    = READ_TOPIC + String(DEVICE_SERIAL);
+String WRITES   = String("daemon/") + String(DEVICE_SERIAL) + "/v1";
+String READS    = String("daemon/") + String(DEVICE_SERIAL) + "/v1/reads";
 
 namespace paddy
 {

@@ -6,8 +6,6 @@ char BROKER_HOST[]      = SECRET_BROKER_HOST;
 int  BROKER_PORT        = SECRET_BROKER_PORT;
 
 char DEVICE_SERIAL[]    = SECRET_DEVICE_SERIAL;
-char WRITE_TOPIC[]      = "daemon/v1/writes/";
-char READ_TOPIC[]       = "daemon/v1/reads/";
 
 // ------ Bluetooth Configuration ------
 char BLE_NAME[]         = SECRET_BLE_NAME;
