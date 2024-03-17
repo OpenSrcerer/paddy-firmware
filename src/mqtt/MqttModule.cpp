@@ -63,6 +63,12 @@ void MqttModule::startMqtt()
     }
 }
 
+void MqttModule::stopMqtt()
+{
+    mqttClient.unsubscribe();
+    mqttClient.disconnect();
+}
+
 void MqttModule::onMqttMessage(int messageSize)
 {
     ControlModule* controlModule = &ControlModule::getInstance();

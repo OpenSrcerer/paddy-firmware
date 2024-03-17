@@ -3,6 +3,7 @@
 
 #include "../../daemon/Daemon.hpp"
 #include "../DaemonState.hpp"
+#include "../../DaemonGlobals.hpp"
 
 namespace paddy
 {
@@ -22,6 +23,8 @@ public:
     static DaemonState &getInstance();
 
 private:
+    unsigned long pingMillis;
+
     Online() {}
     Online(Online const&);
     Online& operator=(Online const&);

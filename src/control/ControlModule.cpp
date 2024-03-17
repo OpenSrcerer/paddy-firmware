@@ -6,16 +6,22 @@ namespace paddy
 
 void ControlModule::on()
 {
-    Serial.println("[ControlModule] On!");
-    switchState = true;
-    digitalWrite(CONTROL_PIN, HIGH);
+    if (switchState == false) 
+    {
+        Serial.println("[ControlModule] On!");
+        switchState = true;
+        digitalWrite(CONTROL_PIN, HIGH);
+    }
 }
 
 void ControlModule::off()
 {
-    Serial.println("[ControlModule] Off!");
-    switchState = false;
-    digitalWrite(CONTROL_PIN, LOW);
+    if (switchState == true) 
+    {
+        Serial.println("[ControlModule] Off!");
+        switchState = false;
+        digitalWrite(CONTROL_PIN, LOW);
+    }
 }
 
 void ControlModule::toggle()

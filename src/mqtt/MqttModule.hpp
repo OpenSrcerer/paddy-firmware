@@ -18,10 +18,13 @@ public:
     static MqttModule &getInstance();
 
     void startMqtt();
+    void stopMqtt();
     void sendMessage(const char* action);
     void onMqttMessage(int messageSize);
+
     inline void poll() { mqttClient.poll(); }
     inline bool isSucceeded() { return connectionSucceeded; }
+    inline bool isConnected() { return mqttClient.connected() }
 
 private:
     MqttModule() : mqttClient(wifiClient) {}

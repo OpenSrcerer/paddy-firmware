@@ -6,6 +6,7 @@ char BROKER_HOST[]      = SECRET_BROKER_HOST;
 int  BROKER_PORT        = SECRET_BROKER_PORT;
 
 char DEVICE_SERIAL[]    = SECRET_DEVICE_SERIAL;
+int  PING_INTERVAL      = 60000; // ms
 
 // ------ Bluetooth Configuration ------
 char BLE_NAME[]         = SECRET_BLE_NAME;
