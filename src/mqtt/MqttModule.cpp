@@ -4,8 +4,8 @@
 #include "../DaemonGlobals.hpp"
 
 // Topics
-String WRITES   = String("daemon/") + String(DEVICE_SERIAL) + "/v1";
-String READS    = String("daemon/") + String(DEVICE_SERIAL) + "/v1/reads";
+String WRITES   = String("daemon/") + String(DEVICE_SERIAL) + "/v1/writes";
+String READS    = String("daemon/") + String(DEVICE_SERIAL) + "/v1/reads/#";
 
 namespace paddy
 {
@@ -30,7 +30,7 @@ void MqttModule::startMqtt()
     {
         Serial.print("[MqttModule] Trying connection (");
         Serial.print(i);
-        Serial.println("/3).");
+        Serial.println("/3)");
         
         if (mqttClient.connect(BROKER_HOST, BROKER_PORT))
         {
@@ -41,7 +41,6 @@ void MqttModule::startMqtt()
         if (i == 2) {
             Serial.print("[MqttModule] Connection failed! Error code: ");
             Serial.print(mqttClient.connectError());
-            Serial.println(".");
 
             return;
         }
@@ -52,36 +51,51 @@ void MqttModule::startMqtt()
     Serial.println(READS);
 
     mqttClient.onMessage([](int messageSize) {
-        MqttModule* mqttModule = &MqttModule::getInstance();
-        mqttModule->onMqttMessage(messageSize);
+        (&MqttModule::getInstance())->onMqttMessage(messageSize);
     });
 
     int subStatus = mqttClient.subscribe(READS.c_str());
+    Serial.println("[MqttModule] Subscription status: " + String(subStatus));
 }
 
 void MqttModule::onMqttMessage(int messageSize)
 {
     ControlModule* controlModule = &ControlModule::getInstance();
 
-    char receivedMessage[messageSize];
+    String topic = mqttClient.messageTopic();
+    char payload[messageSize];
     int i = 0;
-    while (mqttClient.available()) {
-        receivedMessage[i] = (char) mqttClient.read();
+    while (mqttClient.available()) 
+    {
+        payload[i] = (char) mqttClient.read();
         ++i;
     }
-    String receivedString = String(receivedMessage);
 
-    Serial.print("[MqttModule] Received MQTT Message: ");
-    Serial.println(receivedString);
+    Serial.println(String("[MqttModule] <") + String(topic) + String(">: ") + String(payload));
 
-    if (strncmp(receivedMessage, "toggle", 6) == 0) {
-        controlModule->toggle();
-        String response = String("{\"message\":\"toggled\"}");
+    if (topic.endsWith(String("toggle"))) 
+    {
+        if (strncmp(payload, "1", 1) == 0)
+        {
+            controlModule->on();
+        } 
+        else if (strncmp(payload, "0", 1) == 0) 
+        {
+            controlModule->off();
+        }
+        
+        // String response = String("{\"message\":\"toggled\"}");
 
-        mqttClient.beginMessage(WRITES);
-        mqttClient.print(response);
-        mqttClient.endMessage();
+        // mqttClient.beginMessage(WRITES);
+        // mqttClient.print(response);
+        // mqttClient.endMessage();
     }
+}
+
+void MqttModule::sendMessage(const char* action)
+{
+    mqttClient.beginMessage(WRITES + String("/") + action);
+    mqttClient.endMessage();
 }
 
 

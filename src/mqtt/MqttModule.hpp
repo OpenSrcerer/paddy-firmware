@@ -18,6 +18,7 @@ public:
     static MqttModule &getInstance();
 
     void startMqtt();
+    void sendMessage(const char* action);
     void onMqttMessage(int messageSize);
     inline void poll() { mqttClient.poll(); }
     inline bool isSucceeded() { return connectionSucceeded; }
