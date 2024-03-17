@@ -34,7 +34,6 @@ void MqttModule::startMqtt()
         
         if (mqttClient.connect(BROKER_HOST, BROKER_PORT))
         {
-            connectionSucceeded = true;
             break;
         }
 
@@ -56,6 +55,12 @@ void MqttModule::startMqtt()
 
     int subStatus = mqttClient.subscribe(READS.c_str());
     Serial.println("[MqttModule] Subscription status: " + String(subStatus));
+
+    // If you arrived here, subscription succeeded, everything ok!
+    if (subStatus == 1)
+    {
+        connectionSucceeded = true;
+    }
 }
 
 void MqttModule::onMqttMessage(int messageSize)
@@ -83,7 +88,7 @@ void MqttModule::onMqttMessage(int messageSize)
         {
             controlModule->off();
         }
-        
+
         // String response = String("{\"message\":\"toggled\"}");
 
         // mqttClient.beginMessage(WRITES);
