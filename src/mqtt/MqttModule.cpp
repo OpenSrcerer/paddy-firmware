@@ -105,6 +105,8 @@ void MqttModule::onMqttMessage(int messageSize)
 
 void MqttModule::sendMessage(const char* action)
 {
+    Serial.println("[MqttModule] Sending <" + String(action) + ">");
+
     mqttClient.beginMessage(WRITES + String("/") + action);
     mqttClient.endMessage();
 }
