@@ -24,7 +24,7 @@ public:
 
     inline void poll() { mqttClient.poll(); }
     inline bool isSucceeded() { return connectionSucceeded; }
-    inline bool isConnected() { return mqttClient.connected() }
+    inline bool isConnected() { return mqttClient.connected(); }
 
 private:
     MqttModule() : mqttClient(wifiClient) {}

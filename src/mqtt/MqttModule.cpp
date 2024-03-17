@@ -53,7 +53,7 @@ void MqttModule::startMqtt()
         (&MqttModule::getInstance())->onMqttMessage(messageSize);
     });
 
-    int subStatus = mqttClient.subscribe(READS.c_str());
+    int subStatus = mqttClient.subscribe(READS);
     Serial.println("[MqttModule] Subscription status: " + String(subStatus));
 
     // If you arrived here, subscription succeeded, everything ok!
@@ -65,8 +65,8 @@ void MqttModule::startMqtt()
 
 void MqttModule::stopMqtt()
 {
-    mqttClient.unsubscribe();
-    mqttClient.disconnect();
+    mqttClient.unsubscribe(READS);
+    mqttClient.stop();
 }
 
 void MqttModule::onMqttMessage(int messageSize)
