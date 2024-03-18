@@ -26,6 +26,8 @@ void MqttModule::startMqtt()
     Serial.println(">");
 
     mqttClient.setUsernamePassword(jwt, "");
+    mqttClient.setId(String("paddy-daemon-") + DEVICE_SERIAL)
+
     for (size_t i = 1; i <= 3; ++i) 
     {
         Serial.print("[MqttModule] Trying connection (");
