@@ -87,7 +87,15 @@ void MqttModule::onMqttMessage(int messageSize)
 
     Serial.println(String("[MqttModule] <") + String(topic) + String(">: ") + String(payload));
 
-    if (topic.endsWith(String("toggle"))) 
+    if (topic.endsWith(String("on")))
+    {
+        controlModule->on();
+    }
+    else if(topic.endsWith(String("off")))
+    {
+        controlModule->off();
+    }
+    else if (topic.endsWith(String("toggle"))) 
     {
         if (strncmp(payload, "1", 1) == 0)
         {
@@ -97,12 +105,6 @@ void MqttModule::onMqttMessage(int messageSize)
         {
             controlModule->off();
         }
-
-        // String response = String("{\"message\":\"toggled\"}");
-
-        // mqttClient.beginMessage(WRITES);
-        // mqttClient.print(response);
-        // mqttClient.endMessage();
     }
 }
 
