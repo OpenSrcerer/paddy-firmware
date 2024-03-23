@@ -97,14 +97,15 @@ void MqttModule::onMqttMessage(int messageSize)
     }
     else if (topic.endsWith(String("toggle"))) 
     {
-        if (strncmp(payload, "1", 1) == 0)
-        {
-            controlModule->on();
-        } 
-        else if (strncmp(payload, "0", 1) == 0) 
-        {
-            controlModule->off();
-        }
+        // if (strncmp(payload, "1", 1) == 0)
+        // {
+        //     controlModule->on();
+        // } 
+        // else if (strncmp(payload, "0", 1) == 0) 
+        // {
+        //     controlModule->off();
+        // }
+        controlModule->toggle();
     }
 }
 
