@@ -18,12 +18,16 @@ void Online::toggle(Daemon *daemon)
     MqttModule* mqttModule = &MqttModule::getInstance();
     WifiModule* wifiModule = &WifiModule::getInstance();
 
+    unsigned long spins = 0;
     pingMillis = millis();
     while (true)
     {
         if (millis() - pingMillis >= PING_INTERVAL) {
             mqttModule->sendMessage("ping");
             pingMillis = millis();
+
+            Serial.println(String("[State: ONLINE] Spins: ") + String(spins / 60) + "/s.");
+            spins = 0;
         }
 
         if (!mqttModule->isConnected())
@@ -36,6 +40,7 @@ void Online::toggle(Daemon *daemon)
         }
 
         mqttModule->poll();
+        spins++;
     }
 }
 
