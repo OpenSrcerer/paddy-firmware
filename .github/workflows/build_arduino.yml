@@ -19,7 +19,6 @@ jobs:
       - uses: arduino/compile-sketches@v1.1.0
         with:
           fqbn: "arduino:samd:nano_33_iot"
-          sketch-paths:
-            - paddy-firmware
+          sketch-paths: "paddy-firmware"
 
       - uses: arduino/report-size-deltas@v1.1.0
