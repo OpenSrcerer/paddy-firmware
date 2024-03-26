@@ -79,7 +79,7 @@ void MqttModule::onMqttMessage(int messageSize)
     String topic = mqttClient.messageTopic();
     char payload[messageSize];
     int i = 0;
-    while (mqttClient.available()) 
+    while (mqttClient.available() && messageSize > 0) 
     {
         payload[i] = (char) mqttClient.read();
         ++i;
@@ -97,14 +97,6 @@ void MqttModule::onMqttMessage(int messageSize)
     }
     else if (topic.endsWith(String("toggle"))) 
     {
-        // if (strncmp(payload, "1", 1) == 0)
-        // {
-        //     controlModule->on();
-        // } 
-        // else if (strncmp(payload, "0", 1) == 0) 
-        // {
-        //     controlModule->off();
-        // }
         controlModule->toggle();
     }
 }
