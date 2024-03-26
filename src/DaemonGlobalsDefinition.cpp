@@ -23,3 +23,9 @@ char RESET_UUID[]       = SECRET_RESET_UUID;
 // ------ Hardware Configuration ------
 int  CONTROL_PIN        = 2;
 int  MEASUREMENT_PIN    = 7;
+
+// ------ Power Measurement Configuration ------
+int    CT_SAMPLES       = 1676;
+float  CT_CALIBRATE     = 175;   
+float  CT_VOLTAGE       = 238.1;     
+float  CT_LINEAR_SHIFT  = 290;

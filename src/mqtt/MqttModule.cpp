@@ -4,8 +4,8 @@
 #include "../DaemonGlobals.hpp"
 
 // Topics
-String WRITES   = String("daemon/") + String(DEVICE_SERIAL) + "/v1/writes";
-String READS    = String("daemon/") + String(DEVICE_SERIAL) + "/v1/reads/#";
+String WRITES = String("daemon/") + String(DEVICE_SERIAL) + "/v1/writes";
+String READS  = String("daemon/") + String(DEVICE_SERIAL) + "/v1/reads/#";
 
 namespace paddy
 {
@@ -109,11 +109,18 @@ void MqttModule::onMqttMessage(int messageSize)
     }
 }
 
-void MqttModule::sendMessage(const char* action)
+void MqttModule::sendMessage(const char* action, const String* message)
 {
-    Serial.println("[MqttModule] Sending <" + String(action) + ">...");
+    Serial.print("[MqttModule] Sending <" + String(action) + ">: [");
 
     mqttClient.beginMessage(WRITES + String("/") + action);
+    if (message != nullptr)
+    {
+        Serial.print(*message);
+        mqttClient.print(*message);
+    }
+
+    Serial.println("]");
     mqttClient.endMessage();
 }
 

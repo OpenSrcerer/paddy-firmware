@@ -19,7 +19,7 @@ public:
 
     void startMqtt();
     void stopMqtt();
-    void sendMessage(const char* action);
+    void sendMessage(const char* action, const String* message = nullptr);
     void onMqttMessage(int messageSize);
 
     inline void poll() { mqttClient.poll(); }

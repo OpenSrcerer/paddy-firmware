@@ -1,6 +1,7 @@
 #include "OnlineDaemonState.hpp"
 #include "../../mqtt/MqttModule.hpp"
 #include "../../wifi/WifiModule.hpp"
+#include "../../power/PowerModule.hpp"
 #include "../backoff/BackoffDaemonState.hpp"
 
 namespace paddy
@@ -15,16 +16,21 @@ void Online::enter(Daemon *daemon)
 
 void Online::toggle(Daemon *daemon)
 {
-    MqttModule* mqttModule = &MqttModule::getInstance();
-    WifiModule* wifiModule = &WifiModule::getInstance();
+    MqttModule* mqttModule   = &MqttModule::getInstance();
+    WifiModule* wifiModule   = &WifiModule::getInstance();
+    PowerModule* powerModule = &PowerModule::getInstance();
 
     unsigned long spins = 0;
     pingMillis = millis();
+
     while (true)
     {
         if (millis() - pingMillis >= PING_INTERVAL) {
-            mqttModule->sendMessage("ping");
+            String powerUsage = String(powerModule->getPowerUsageWatts());
             pingMillis = millis();
+
+            mqttModule->sendMessage("ping");
+            mqttModule->sendMessage("power", &powerUsage);
 
             Serial.println(String("[State: ONLINE] Spins: ") + String(spins / 60) + "/s.");
             spins = 0;
