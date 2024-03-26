@@ -12,15 +12,12 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        fqbn:
-          - arduino:samd:nano_33_iot
+    with:
+      fqbn: "arduino:samd:nano_33_iot"
+      sketch-paths:
+        - paddy-firmware
+
     steps:
       - uses: actions/checkout@v4
       - uses: arduino/compile-sketches@v1.1.0
-
-  report:
-    runs-on: ubuntu-latest
-    steps:
       - uses: arduino/report-size-deltas@v1.1.0
