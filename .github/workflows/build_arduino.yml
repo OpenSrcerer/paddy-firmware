@@ -1,0 +1,26 @@
+name: Arduino Build
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fqbn:
+          - arduino:samd:nano_33_iot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/compile-sketches@v1.1.0
+
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: arduino/report-size-deltas@v1.1.0
