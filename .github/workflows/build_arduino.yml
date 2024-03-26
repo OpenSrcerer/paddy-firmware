@@ -29,5 +29,7 @@ jobs:
               version: 1.1.0
             - name: FlashStorage_SAMD
               version: 1.3.2
+            - name: WiFiNINA
+              version: 1.8.14
 
       - uses: arduino/report-size-deltas@v1.1.0
