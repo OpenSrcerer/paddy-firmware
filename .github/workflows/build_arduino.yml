@@ -20,5 +20,14 @@ jobs:
         with:
           fqbn: "arduino:samd:nano_33_iot"
           sketch-paths: "."
+          libraries: |
+            - name: ArduinoBLE
+              version: 1.3.6
+            - name: ArduinoMqttClient
+              version: 0.1.8
+            - name: EmonLib
+              version: 1.1.0
+            - name: FlashStorage_SAMD
+              version: 1.3.2
 
       - uses: arduino/report-size-deltas@v1.1.0
