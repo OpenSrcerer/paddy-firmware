@@ -91,7 +91,7 @@ void BleModule::getCredentials()
         if (ssid.length())
         {
             // Write credentials to storage
-            // storage->writeAt(jwt.c_str(), JWT_ADDRESS);
+            storage->writeAt(jwt.c_str(), JWT_ADDRESS);
             storage->writeAt(ssid.c_str(), SSID_ADDRESS);
             storage->writeAt(pass.c_str(), PASS_ADDRESS);
             storage->writeAt(eUsername.c_str(), E_USERNAME_ADDRESS);
