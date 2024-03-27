@@ -104,6 +104,14 @@ void StorageModule::writeAt(const char* toWrite, int at)
 
 void StorageModule::clearAll()
 {
+	// Clear in-memory saves
+	memoryJwt = String();
+    memorySsid = String();
+    memoryPass = String();
+    memoryEUsername = String();
+    memoryEPassword = String();
+
+	// Clear EEPROM
 	deleteAt(JWT_ADDRESS);
 	deleteAt(SSID_ADDRESS);
 	deleteAt(PASS_ADDRESS);

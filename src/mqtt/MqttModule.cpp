@@ -60,7 +60,8 @@ void MqttModule::startMqtt()
     Serial.println("[MqttModule] Subscription status: " + String(subStatus));
 
     // If you arrived here, subscription succeeded, everything ok!
-    if (subStatus == 1)
+    // Not sure about the statuses, 0 & 1 seem correct, there are no docs...
+    if (subStatus == 0 || subStatus == 1)
     {
         connectionSucceeded = true;
     }

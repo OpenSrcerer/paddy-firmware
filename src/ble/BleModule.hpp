@@ -16,7 +16,6 @@ class BleModule
 private:
     // ---- Advertisement ----
     BLEService* bleService;
-    BLEDevice central;
 
     // ---- Serial (Read Only) ----
     BLEStringCharacteristic* bleSerialChar;
@@ -42,30 +41,6 @@ private:
 public:    
     static BleModule& getInstance();
 
-    inline void newCharacteristics()
-    {
-        bleService =        new BLEService(SERVICE_UUID);
-        bleSerialChar =     new BLEStringCharacteristic(SERIAL_UUID, BLERead, MAX_CHARACTERISTIC_BUFFER_SIZE);
-        bleSsidChar =       new BLEStringCharacteristic(SSID_UUID, BLEWrite, MAX_CHARACTERISTIC_BUFFER_SIZE);
-        blePassChar =       new BLEStringCharacteristic(PASS_UUID, BLEWrite, MAX_CHARACTERISTIC_BUFFER_SIZE);
-        bleEUsernameChar =  new BLEStringCharacteristic(E_USERNAME_UUID, BLEWrite, MAX_CHARACTERISTIC_BUFFER_SIZE);
-        bleEPasswordChar =  new BLEStringCharacteristic(E_PASSWORD_UUID, BLEWrite, MAX_CHARACTERISTIC_BUFFER_SIZE);
-        bleJwtChar =        new BLEStringCharacteristic(JWT_UUID, BLEWrite, MAX_JWT_CHARACTERISTIC_BUFFER_SIZE);
-        bleResetChar =      new BLEStringCharacteristic(RESET_UUID, BLEWrite, MAX_RESET_CHARACTERISTIC_BUFFER_SIZE);
-    }
-
-    inline void freeCharacteristics()
-    {
-        free(bleService);
-        free(bleSerialChar);
-        free(bleSsidChar);
-        free(blePassChar);
-        free(bleEUsernameChar);
-        free(bleEPasswordChar);
-        free(bleJwtChar);
-        free(bleResetChar);
-    }
-
     void startBle();
     void getCredentials();
     void stopBle();
@@ -77,6 +52,10 @@ private:
     BleModule() {}
     BleModule(BleModule const&);
     BleModule& operator=(BleModule const&);
+
+    void setupBle();
+    void newCharacteristics();
+    void freeCharacteristics();
 };
 
 }
