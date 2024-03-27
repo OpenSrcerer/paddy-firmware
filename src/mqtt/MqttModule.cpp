@@ -71,6 +71,7 @@ void MqttModule::stopMqtt()
 {
     mqttClient.unsubscribe(READS);
     mqttClient.stop();
+    Serial.println("[MqttModule] Connection ended.");
 }
 
 void MqttModule::onMqttMessage(int messageSize)

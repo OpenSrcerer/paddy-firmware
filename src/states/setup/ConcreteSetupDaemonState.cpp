@@ -25,6 +25,7 @@ void Setup::exit(Daemon *daemon)
 
 void Setup::toggle(Daemon *daemon)
 {
+    daemon->reset();
     daemon->setState(Connecting::getInstance());
 }
 

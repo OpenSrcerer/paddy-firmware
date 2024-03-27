@@ -23,6 +23,7 @@ void Backoff::toggle(Daemon *daemon)
     if (wasReset)
     {
         Serial.println("[State: BACKOFF] Device was reset.");
+        daemon->reset(); // Prevents next step...
         daemon->setState(Setup::getInstance());
     }
     else
