@@ -21,19 +21,28 @@ void Online::toggle(Daemon *daemon)
     PowerModule* powerModule = &PowerModule::getInstance();
 
     unsigned long spins = 0;
+
+    measureMillis = millis();
     pingMillis = millis();
 
     while (true)
     {
-        if (millis() - pingMillis >= PING_INTERVAL) {
-            String powerUsage = String(powerModule->getPowerUsageWatts());
+        if (millis() - pingMillis >= PING_INTERVAL)
+        {
             pingMillis = millis();
 
             mqttModule->sendMessage("ping");
-            mqttModule->sendMessage("power", &powerUsage);
 
             Serial.println(String("[State: ONLINE] Spins: ") + String(spins / 60) + "/s.");
             spins = 0;
+        }
+
+        if (millis() - measureMillis >= MEASURE_INTERVAL)
+        {
+            measureMillis = millis();
+            
+            String powerUsage = String(powerModule->getPowerUsageWatts());
+            mqttModule->sendMessage("power", &powerUsage);
         }
 
         if (!mqttModule->isConnected())

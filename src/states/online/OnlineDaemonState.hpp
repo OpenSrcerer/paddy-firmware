@@ -24,6 +24,7 @@ public:
 
 private:
     unsigned long pingMillis;
+    unsigned long measureMillis;
 
     Online() {}
     Online(Online const&);

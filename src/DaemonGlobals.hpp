@@ -7,6 +7,7 @@ extern int    BROKER_PORT;
 
 extern char   DEVICE_SERIAL[];
 extern int    PING_INTERVAL;
+extern int    MEASURE_INTERVAL;
 
 // ------ Bluetooth Configuration ------
 extern char   BLE_NAME[];           // Name that pops up on the device when looking up bluetooth
