@@ -5,7 +5,7 @@
 #define SECRET_DEVICE_SERIAL    "4"
 
 // ------ Bluetooth Configuration ------
-#define SECRET_BLE_NAME         "paddy_daemon_proto_01"
+#define SECRET_BLE_NAME         "paddy_daemon_proto_04"
 
 #define SECRET_SERVICE_UUID     "89E34F48-DD3B-427A-A979-BBB0D139ADDA"
 #define SECRET_SERIAL_UUID      "CCA0A6F7-F693-4B6B-87FA-D26C75CBCC20"

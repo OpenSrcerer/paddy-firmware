@@ -7,7 +7,7 @@ int  BROKER_PORT        = SECRET_BROKER_PORT;
 
 char DEVICE_SERIAL[]    = SECRET_DEVICE_SERIAL;
 int  PING_INTERVAL      = 60000; // ms
-int  MEASURE_INTERVAL   = 30000; // ms
+int  MEASURE_INTERVAL   = 10000; // ms
 
 // ------ Bluetooth Configuration ------
 char BLE_NAME[]         = SECRET_BLE_NAME;
@@ -23,10 +23,10 @@ char RESET_UUID[]       = SECRET_RESET_UUID;
 
 // ------ Hardware Configuration ------
 int  CONTROL_PIN        = 2;
-int  MEASUREMENT_PIN    = 7;
+int  MEASUREMENT_PIN    = (14ul) + 7;
 
 // ------ Power Measurement Configuration ------
 int    CT_SAMPLES       = 1676;
-float  CT_CALIBRATE     = 175;   
+float  CT_CALIBRATE     = 25;   
 float  CT_VOLTAGE       = 238.1;     
-float  CT_LINEAR_SHIFT  = 290;
+float  CT_LINEAR_SHIFT  = 37;

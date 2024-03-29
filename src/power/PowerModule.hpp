@@ -13,7 +13,7 @@ private:
     EnergyMonitor energyMonitor;
 
 public:
-    int getPowerUsageWatts(); // Returns the measured power in Watts
+    double getPowerUsageWatts(); // Returns the measured power in Watts
 
     static PowerModule &getInstance();
 

@@ -27,6 +27,8 @@ void Online::toggle(Daemon *daemon)
 
     while (true)
     {
+        mqttModule->poll();
+
         if (millis() - pingMillis >= PING_INTERVAL)
         {
             pingMillis = millis();
@@ -41,7 +43,7 @@ void Online::toggle(Daemon *daemon)
         {
             measureMillis = millis();
             
-            String powerUsage = String(powerModule->getPowerUsageWatts());
+            String powerUsage = String(powerModule->getPowerUsageWatts(), 1); // 1 decimal place
             mqttModule->sendMessage("power", &powerUsage);
         }
 
@@ -54,7 +56,6 @@ void Online::toggle(Daemon *daemon)
             return;
         }
 
-        mqttModule->poll();
         spins++;
     }
 }
