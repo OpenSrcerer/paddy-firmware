@@ -1,4 +1,5 @@
 #include "PowerModule.hpp"
+#include "../control/ControlModule.hpp"
 
 namespace paddy
 {
@@ -10,8 +11,8 @@ double PowerModule::getPowerUsageWatts()
 
     // Wattage less than zero shouldn't happen normally,
     // but can rarely occur due to the linear shift.
-    // Wattages less than 10 can be measurement errors, hence discarded.
-    if (w < 10)
+    // Wattages less than 5 can be measurement errors, hence discarded.
+    if (ControlModule::getInstance()->isOn() && w < 5 || w < 10)
     {
         w = 0;
     }
