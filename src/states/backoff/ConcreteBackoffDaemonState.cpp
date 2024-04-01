@@ -10,16 +10,7 @@ namespace paddy
 
 void Backoff::enter(Daemon *daemon)
 {
-    Serial.println("[State: BACKOFF] Awaiting reset for 60 seconds and retrying connection otherwise.");
-    daemon->toggle();
-}
-
-void Backoff::toggle(Daemon *daemon)
-{
-    BleModule* ble = &BleModule::getInstance();
     MqttModule* mqtt = &MqttModule::getInstance();
-    StorageModule* storage = &StorageModule::getInstance();
-
     if (mqtt->deviceWasReset())
     {
         Serial.println("[State: BACKOFF] Device was reset through MQTT.");
@@ -27,6 +18,15 @@ void Backoff::toggle(Daemon *daemon)
         daemon->reset(); // Next step is indirectly done when the device restarts.
         daemon->setState(Setup::getInstance()); // This statement has no effect.
     }
+
+    Serial.println("[State: BACKOFF] Awaiting reset for 60 seconds and retrying connection otherwise.");
+    daemon->toggle();
+}
+
+void Backoff::toggle(Daemon *daemon)
+{
+    BleModule* ble = &BleModule::getInstance();
+    StorageModule* storage = &StorageModule::getInstance();
 
     ble->startBle();
     bool wasReset = ble->awaitReset();
