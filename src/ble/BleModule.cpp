@@ -104,7 +104,6 @@ void BleModule::getCredentials()
 
 bool BleModule::awaitReset()
 {
-    StorageModule* storage = &StorageModule::getInstance();
     long startClock = millis(); // Sample time
 
     // Spin for 60 seconds
@@ -114,7 +113,6 @@ bool BleModule::awaitReset()
 
         if (bleResetChar->written())
         {
-            StorageModule::getInstance().clearAll();
             return true;
         }
     }

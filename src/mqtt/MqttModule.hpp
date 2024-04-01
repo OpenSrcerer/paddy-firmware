@@ -11,6 +11,7 @@ class MqttModule
 {
 private:
     bool connectionSucceeded; // Only updated after startWifi()
+    bool deviceReset; // Only "true" if device reads "reset" topic
     WiFiSSLClient wifiClient;
     MqttClient mqttClient;
 
@@ -25,6 +26,7 @@ public:
     inline void poll() { mqttClient.poll(); }
     inline bool isSucceeded() { return connectionSucceeded; }
     inline bool isConnected() { return mqttClient.connected(); }
+    inline bool deviceWasReset() { return deviceReset; }
 
 private:
     MqttModule() : mqttClient(wifiClient) {}

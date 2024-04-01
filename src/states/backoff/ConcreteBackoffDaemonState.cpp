@@ -1,5 +1,7 @@
 #include "BackoffDaemonState.hpp"
 #include "../../ble/BleModule.hpp"
+#include "../../mqtt/MqttModule.hpp"
+#include "../../storage/StorageModule.hpp"
 #include "../connecting/ConnectingDaemonState.hpp"
 #include "../setup/SetupDaemonState.hpp"
 
@@ -15,6 +17,16 @@ void Backoff::enter(Daemon *daemon)
 void Backoff::toggle(Daemon *daemon)
 {
     BleModule* ble = &BleModule::getInstance();
+    MqttModule* mqtt = &MqttModule::getInstance();
+    StorageModule* storage = &StorageModule::getInstance();
+
+    if (mqtt->deviceWasReset())
+    {
+        Serial.println("[State: BACKOFF] Device was reset through MQTT.");
+        StorageModule::getInstance().clearAll();
+        daemon->reset(); // Next step is indirectly done when the device restarts.
+        daemon->setState(Setup::getInstance()); // This statement has no effect.
+    }
 
     ble->startBle();
     bool wasReset = ble->awaitReset();
@@ -22,9 +34,10 @@ void Backoff::toggle(Daemon *daemon)
 
     if (wasReset)
     {
-        Serial.println("[State: BACKOFF] Device was reset.");
-        daemon->reset(); // Prevents next step...
-        daemon->setState(Setup::getInstance());
+        Serial.println("[State: BACKOFF] Device was reset through BLE.");
+        StorageModule::getInstance().clearAll();
+        daemon->reset(); // Next step is indirectly done when the device restarts.
+        daemon->setState(Setup::getInstance()); // This statement has no effect.
     }
     else
     {

@@ -101,6 +101,10 @@ void MqttModule::onMqttMessage(int messageSize)
     {
         controlModule->toggle();
     }
+    else if (topic.endsWith(String("reset"))) 
+    {
+        deviceReset = true;
+    }
 }
 
 void MqttModule::sendMessage(const char* action, const String* message)

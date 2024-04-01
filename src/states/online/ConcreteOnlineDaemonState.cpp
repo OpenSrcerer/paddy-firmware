@@ -47,7 +47,7 @@ void Online::toggle(Daemon *daemon)
             mqttModule->sendMessage("power", &powerUsage);
         }
 
-        if (!mqttModule->isConnected())
+        if (!mqttModule->isConnected() || mqttModule->deviceWasReset())
         {
             mqttModule->stopMqtt();
             wifiModule->stopWifi();
