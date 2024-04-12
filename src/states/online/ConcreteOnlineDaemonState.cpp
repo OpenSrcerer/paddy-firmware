@@ -33,7 +33,9 @@ void Online::toggle(Daemon *daemon)
         {
             pingMillis = millis();
 
-            mqttModule->sendMessage("ping");
+            // Get the WiFi signal strength
+            String rssi = String(WiFi.RSSI());
+            mqttModule->sendMessage("ping", &rssi);
 
             Serial.println(String("[State: ONLINE] Spins: ") + String(spins / 60) + "/s.");
             spins = 0;
