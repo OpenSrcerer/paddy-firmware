@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="img/paddy_infra.png" alt="logo" width="250"/>
+    <img src="img/paddy_firmware.png" alt="logo" width="250"/>
 </p>
 
 > ⚠️ Documentation is still WIP. Expect more updates around May.
