@@ -14,3 +14,8 @@ The job of this code is to interface with the Paddy MQTT Broker through Wi-Fi, o
 
 1. On/Off toggling of the load device
 2. Power measurement for the load device, with periodic statistic sending.
+
+# Circuit Diagram
+<p align="center">
+    <img src="img/paddy_circuit_diagram.png" alt="Paddy Circuit Diagram"/>
+</p>
