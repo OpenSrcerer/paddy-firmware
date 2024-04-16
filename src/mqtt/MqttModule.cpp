@@ -71,14 +71,19 @@ void MqttModule::stopMqtt()
 {
     mqttClient.unsubscribe(READS);
     mqttClient.stop();
+
+    deviceRotated = false;
+
     Serial.println("[MqttModule] Connection ended.");
 }
 
 void MqttModule::onMqttMessage(int messageSize)
 {
     ControlModule* controlModule = &ControlModule::getInstance();
+    StorageModule* storageModule = &StorageModule::getInstance();
 
     String topic = mqttClient.messageTopic();
+    
     char payload[messageSize];
     int i = 0;
     while (mqttClient.available() && messageSize > 0) 
@@ -86,24 +91,31 @@ void MqttModule::onMqttMessage(int messageSize)
         payload[i] = (char) mqttClient.read();
         ++i;
     }
+    payload[i] = '\0'; // Null-terminate the payload
 
-    Serial.println(String("[MqttModule] <") + String(topic) + String(">: ") + String(payload));
+    Serial.println(String("[MqttModule] <") + String(topic) + String("> ") 
+        + String("[") + String(messageSize) + String("]: ") + String(payload));
 
     if (topic.endsWith(String("on")))
-    {
+    { // Turn device on
         controlModule->on();
     }
     else if(topic.endsWith(String("off")))
-    {
+    { // Turn device off
         controlModule->off();
     }
     else if (topic.endsWith(String("toggle"))) 
-    {
+    { // Toggle device
         controlModule->toggle();
     }
     else if (topic.endsWith(String("reset"))) 
-    {
+    { // Reset device completely
         deviceReset = true;
+    }
+    else if (topic.endsWith(String("rotate")))
+    { // Rotate JWT when is near expiration
+        deviceRotated = true;
+        storageModule->writeAt(payload, JWT_ADDRESS);
     }
 }
 

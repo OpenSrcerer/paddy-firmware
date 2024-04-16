@@ -12,6 +12,7 @@ class MqttModule
 private:
     bool connectionSucceeded; // Only updated after startWifi()
     bool deviceReset; // Only "true" if device reads "reset" topic
+    bool deviceRotated; // Only "true" if device reads "reload" topic
     WiFiSSLClient wifiClient;
     MqttClient mqttClient;
 
@@ -27,6 +28,7 @@ public:
     inline bool isSucceeded() { return connectionSucceeded; }
     inline bool isConnected() { return mqttClient.connected(); }
     inline bool deviceWasReset() { return deviceReset; }
+    inline bool deviceWasRotated() { return deviceRotated; }
 
 private:
     MqttModule() : mqttClient(wifiClient) {}

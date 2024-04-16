@@ -11,6 +11,7 @@ namespace paddy
 void Backoff::enter(Daemon *daemon)
 {
     MqttModule* mqtt = &MqttModule::getInstance();
+    
     if (mqtt->deviceWasReset())
     {
         Serial.println("[State: BACKOFF] Device was reset through MQTT.");
