@@ -10,20 +10,20 @@ namespace paddy
 class Connecting : public DaemonState
 {
 public:
-	inline String &name() { 
+    inline String &name() { 
         static String name("Connecting");
         return name;
     }
-	
-	void enter(Daemon *daemon);
-	void exit(Daemon *daemon) {}
-	void toggle(Daemon *daemon);
+    
+    void enter(Daemon *daemon);
+    void exit(Daemon *daemon) {}
+    void toggle(Daemon *daemon);
 
-	static DaemonState &getInstance();
+    static DaemonState &getInstance();
 
 private:
-	Connecting() {}
-	Connecting(Connecting const&);
+    Connecting() {}
+    Connecting(Connecting const&);
     Connecting& operator=(Connecting const&);
 };
 

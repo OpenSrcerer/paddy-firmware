@@ -5,15 +5,15 @@ paddy::Daemon daemon;
 
 void setup()
 {
-	pinMode(LED_BUILTIN, OUTPUT);
-	pinMode(CONTROL_PIN, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(CONTROL_PIN, OUTPUT);
 
-	Serial.begin(9600);
+    Serial.begin(9600);
 
-	daemon.toggle(); // Move to the first state
+    daemon.toggle(); // Move to the first state
 }
 
 void loop()
 {
-	// Nothing to see here :)
+    // Nothing to see here :)
 }
